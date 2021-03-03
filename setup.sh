@@ -10,7 +10,7 @@ cd data
 
 # JSB Chorales data set
 if [ ! -f "JSB Chorales.zip" ]; then
-	curl http://www-etud.iro.umontreal.ca/~boulanni/JSB%20Chorales.zip
+	wget http://www-etud.iro.umontreal.ca/~boulanni/JSB%20Chorales.zip
 fi
 
 if [ ! -d "JSB Chorales" ]; then
