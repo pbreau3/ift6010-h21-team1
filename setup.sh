@@ -20,9 +20,10 @@ fi
 # Maestro data set
 ## TODO
 
+# Set up fluidsynth
+echo "Sound font path is"
+cat sound_font_path.txt
+
 # Packages, libraries
 pip install mido
 apt install fluidsynth
-
-# Set up fluidsynth
-echo "/usr/share/sounds/sf2/FluidR3_GM.sf2" > sound_font_path.txt

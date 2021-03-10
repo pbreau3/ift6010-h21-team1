@@ -9,4 +9,4 @@ if [ $# -ne 2 ]; then
 fi
 
 # Converts a midi to a wav for listening on colab
-fluidsynth -ni `cat sound_font_path.txt` $1 -F $2 -r 44100
+fluidsynth -ni `cat sound_font_path.txt` "$1" -F "$2" -r 44100
