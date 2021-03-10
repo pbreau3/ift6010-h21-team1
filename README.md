@@ -1,1 +1,4 @@
-# ift6010-h21-team1
+# Music generation project for IFT 6010
+
+## Getting Started
+To download the data sets, use `setup.sh`.
