@@ -11,6 +11,17 @@ class Quantizer:
         self.datapath = datapath
         self.timestep = timestep
 
+    def draw_piano_roll(self, sample, notes_dict):
+
+        for k, v in notes_dict.items():
+            x = [v[i:i + 2] for i in range(0, len(v), 2)]
+            y = [int(k), int(k)]
+            for pair in x:
+                plt.plot([pair[0], pair[1]], [y, y], c='r')
+
+        plt.title(sample)
+        plt.show()
+
     def build_corpus(self, datapath='/data/JSB Chorales/train', number_of_songs=5):
 
         # JSB chorales quantize into 120 ticks chunks
@@ -55,12 +66,7 @@ class Quantizer:
                             notes[str(note)].append(TOTAL_TIME)
 
                 # Draw piano roll
-                for k,v in notes.items():
-                    x = [v[i:i + 2] for i in range(0, len(v), 2)]
-                    y = [int(k), int(k)]
-                    for pair in x:
-                        plt.plot([pair[0], pair[1]], [y, y], c='r')
-                plt.show()
+                self.draw_piano_roll(sample=sample, notes_dict=notes)
 
             assert np.abs(TOTAL_TIME - mid.length) < 1.0, "Length of track not consitent with {}".format(mid.length)
             print("Total time: {}".format(TOTAL_TIME))
