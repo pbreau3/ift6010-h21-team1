@@ -3,3 +3,6 @@
 
 # Wave audio
 *.wav
+
+# IDE
+.vscode/
