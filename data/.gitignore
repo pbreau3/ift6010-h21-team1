@@ -1,4 +1,5 @@
 # gitignore
 JSB Chorales.zip
 JSB Chorales/
-text
+text*
+kenlm.voc
