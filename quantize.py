@@ -14,6 +14,7 @@ def get_maximum_song_length(datapath):
     time_list = [] #in ticks
     ticks_per_beats_list = []
     start = datetime.now()
+    note = {}
 
     for sample in samples:
         mid = MidiFile(datapath + '/' + sample)
@@ -37,6 +38,8 @@ def get_maximum_song_length(datapath):
 
                     time_list.append(time)
                     ticks_per_beats_list.append(mid.ticks_per_beat)
+                    if str(note) not in notes.keys():
+                        notes[str(note)] = True
 
     exctn_time =( datetime.now() - start).total_seconds()
     print("Took: {}".format(exctn_time))
@@ -47,10 +50,15 @@ def get_maximum_song_length(datapath):
     lengths = np.array(lengths)
 
 
-    max, min = lengths.max(), lengths.min()
+    max, min, mean = lengths.max(), lengths.min(), lengths.mean()
     max_ticks = second2tick(second=max,ticks_per_beat=100, tempo=500000)
     min_ticks = second2tick(second=min,ticks_per_beat=100, tempo=500000)
-    print("Maximum length = {} ticks, minimum length = {} ticks".format(max_ticks, min_ticks))
+    mean_ticks = second2tick(second=mean,ticks_per_beat=100, tempo=500000)
+    print("Maximum length = {} ticks, minimum length = {} ticks, average length in ticks ={}".format(max_ticks, min_ticks, mean_ticks))
+    print("Maximum length = {}s, minimum length = {}s, average length ={}s".format(max, min, mean))
+    print("Unique notes:\n")
+    for note in notes.keys():
+        print(note)
 
     return max, min
 
@@ -186,13 +194,14 @@ if __name__ == "__main__":
     np.random.seed(0)
     # torch.manual_seed(0)
 
-    datapath = r"C:\Users\isabelle\Documents\PythonScripts\ift6010-h21-team1\data\JSB Chorales\train"
+    datapath = r"C:\Users\isabelle\Documents\PythonScripts\ift6010-h21-team1\data\JSB Chorales\test"
     quantizer = Quantizer(datapath=datapath)
+    # quantizer.exploration1(datapath=datapath)
     # enc_midi = quantizer.encode_midi(songpath=r"C:\Users\isabelle\Documents\PythonScripts\ift6010-h21-team1\data\JSB Chorales\train\23.mid")
     # print(enc_midi)
-    quantizer.build_corpus_file(datapath, '', '')
+    # quantizer.build_corpus_file(datapath, '', '')
     # default timestep = 1
-    # max, min = get_maximum_song_length(datapath)
+    max, min = get_maximum_song_length(datapath)
     # print("Maximum length = {}s, minimum length = {}s".format(max, min))
 
 
