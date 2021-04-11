@@ -5,6 +5,7 @@ from evaluate import get_sentences
 import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
+from torch.nn.utils.rnn import pack_padded_sequence
 
 def build_vocab():
     # Build a list with the modified vocabulary of "Music with Expressivity..."
@@ -100,7 +101,18 @@ if __name__ == "__main__":
     ### Preprocessing
     ##
     datapath = r"C:\Users\isabelle\Documents\PythonScripts\ift6010-h21-team1\corpus.txt"
+
     batch, x_lens, token_to_int, int_to_token = build_training_batch(datapath)
+    #Technically no need to pack sequences...hum...
+
+    batch_packed = pack_padded_sequence(batch, x_lens, batch_first=True, enforce_sorted=False)
+
+    embedding_dim, h_dim, n_layers = batch.shape[2], 2, 3
+    x_packed = batch_packed
+    rnn = nn.GRU(embedding_dim, h_dim, n_layers, batch_first=True)
+    # output_packed, hidden = rnn(x_packed, hidden)
+    output_packed, hidden = rnn(x_packed)
+    print("Dodeee!")
     #
     # corpus = get_sentences(datapath)
     # #get maximum sequence length
