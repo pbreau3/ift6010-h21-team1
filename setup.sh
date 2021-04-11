@@ -25,5 +25,6 @@ echo "Sound font path is"
 cat sound_font_path.txt
 
 # Packages, libraries
-pip install mido
+pip install mido music21
 apt install fluidsynth
+apt install musescore
