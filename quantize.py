@@ -35,6 +35,7 @@ Rest 1 // rest, 1 beat or 12 quanta long
 """
 # --------------------
 from itertools import zip_longest
+import os
 from typing import List
 from fractions import Fraction
 import numpy as np
@@ -150,10 +151,26 @@ def noteToTokens(note: Note) -> List[str]:
 
     return tokens
 
-def main():
-    s = readMIDI("data/JSB Chorales/test/102.mid")
+def textToScore(tokens: List[str]) -> Score:
+    """Generates a music21 score from the list of tokens
 
-    print(scoreToText(s))
+    Args:
+        tokens (List[str]): List of tokens from text
+
+    Returns:
+        Score: music21 score
+    """
+    pass
+
+def main():
+    s = readMIDI("data/JSB Chorales/train/239.mid")
+
+    tokens = scoreToText(s)
+    with open("data/239.txt", mode='w') as text_out:
+      for i in range(0, len(tokens)-1, 2):
+        batch = tokens[i:i+2]
+        name, number = batch
+        text_out.write("{name} {number}\n".format(name=name, number=number))
 
     
 if __name__ == "__main__":
