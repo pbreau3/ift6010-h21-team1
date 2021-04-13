@@ -20,6 +20,13 @@ fi
 # Maestro data set
 ## TODO
 
+cd ..
+
+# Prepare model folder
+if [ ! -d model ]; then
+    mkdir -p model/kenlm
+fi
+
 # Set up fluidsynth
 echo "Sound font path is"
 cat sound_font_path.txt
@@ -28,3 +35,6 @@ cat sound_font_path.txt
 pip install -U mido music21 musicautobot
 apt install fluidsynth
 apt install musescore
+
+# kenlm
+pip install https://github.com/kpu/kenlm/archive/master.zip
