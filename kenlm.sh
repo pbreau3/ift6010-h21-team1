@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s expand_aliases
 
 # Must change this if your compiled kenlm is somewhere else!!!
 chmod +x ../kenlm/build/bin/*
