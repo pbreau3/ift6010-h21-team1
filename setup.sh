@@ -37,4 +37,4 @@ apt install fluidsynth
 apt install musescore
 
 # kenlm
-pip install https://github.com/kpu/kenlm/archive/master.zip
+pip install -U https://github.com/kpu/kenlm/archive/master.zip
