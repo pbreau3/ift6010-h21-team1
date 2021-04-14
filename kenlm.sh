@@ -1,10 +1,7 @@
 #!/bin/bash
-shopt -s expand_aliases
 
-# Must change this if your compiled kenlm is somewhere else!!!
-chmod +x ../kenlm/build/bin/*
-alias lmplz="../kenlm/build/bin/lmplz"
-alias build_binary="../kenlm/build/bin/build_binary"
+# Assume kenlm has been install via cmake and binaries are accessible directly
+# through the command line
 
 # Script that creates a kenlm n-gram model
 if [ $# -ne 2 ]; then

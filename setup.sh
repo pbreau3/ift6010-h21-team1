@@ -35,6 +35,3 @@ cat sound_font_path.txt
 pip install -U mido music21 musicautobot
 apt install fluidsynth
 apt install musescore
-
-# kenlm
-pip install -U https://github.com/kpu/kenlm/archive/master.zip
