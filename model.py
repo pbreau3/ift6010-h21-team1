@@ -20,9 +20,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def showPlot(points):
     plt.figure()
     fig, ax = plt.subplots()
-    # this locator puts ticks at regular intervals
-    loc = ticker.MultipleLocator(base=0.2)
-    ax.yaxis.set_major_locator(loc)
+    # # this locator puts ticks at regular intervals
+    # loc = ticker.MultipleLocator(base=0.2)
+    # ax.yaxis.set_major_locator(loc)
     plt.plot(points)
 
 def asMinutes(s):
@@ -148,13 +148,66 @@ class DecoderRNN(nn.Module):
 
     def forward(self, input, hidden):
         out, hidden = self.gru(input, hidden)
-        out = self.softmax(self.out(out[0]))
+        out = self.softmax(self.out(out[0])) #ln(S)
         return out, hidden
 
     def initHidden(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
 
-def train(batch, x_lens,token_to_int, encoder, decoder, encoder_optim, decoder_optim, criterion, max_length=728):
+def evaluate(encoder, decoder, token_to_int, int_to_token, song, max_length=800):
+    with torch.no_grad():
+        encoder_hidden = encoder.initHidden()
+
+    seq_len = song.shape[0]
+    decoded_song = []
+
+    for ei in range(seq_len):
+        encoder_out, encoder_hidden = encoder(song[ei].unsqueeze(0).unsqueeze(0),
+                                              encoder_hidden)  # (b,seq, in_size) == (1,1,voc)
+        # encoder_outs[ei] = encoder[0,0]
+
+    # Build the start 1-hot
+    start_one_hot = torch.zeros(batch.shape[2])
+    start_one_hot[token_to_int['<START>']] = 1
+    start_token = torch.Tensor(start_one_hot).unsqueeze(0).unsqueeze(0)
+    decoder_input = start_token.to(device=device)
+
+    decoder_hidden = encoder_hidden  # 1,1,268
+
+    # Build the start 1-hot
+    start_one_hot = torch.zeros(batch.shape[2])
+    start_one_hot[token_to_int['<START>']] = 1
+    start_token = torch.Tensor(start_one_hot).unsqueeze(0).unsqueeze(0)
+    decoder_input = start_token.to(device=device)
+
+    decoder_hidden = encoder_hidden  # 1,1,268
+
+    #decode
+    for di in range(max_length):
+        decoder_out, decoder_hidden = decoder(decoder_input, decoder_hidden)
+        class_label_pred = torch.argmax(song[di]).unsqueeze(0)
+
+        if class_label_pred == token_to_int['<END>']:
+            decoded_song.append('<END>')
+            break
+        else:
+            decoded_song.append(int_to_token[class_label_pred])
+
+        one_hot = torch.zeros(batch.shape[2])
+        one_hot[class_label_pred] = 1
+        nxt_token = torch.Tensor(one_hot).unsqueeze(0).unsqueeze(0)
+        decoder_input = nxt_token  # give ground truth to the model
+        decoder_input = decoder_input.to(device)
+
+    return decoded_song
+
+# def evaluate_rdm(encoder, decoder, batch):
+#     song = np.random.choice(batch)
+#     decoded_song = evaluate()
+#     return 0
+
+
+def train(batch, x_lens, token_to_int, encoder, decoder, encoder_optim, decoder_optim, criterion, max_length=728):
 
     encoder_hidden = encoder.initHidden()
 
@@ -182,8 +235,9 @@ def train(batch, x_lens,token_to_int, encoder, decoder, encoder_optim, decoder_o
         #teacher forcing
         for di in range(seq_len):
             decoder_out, decoder_hidden = decoder(decoder_input, decoder_hidden)
-            loss = loss + criterion(decoder_out, song[di].unsqueeze(0).unsqueeze(0)) #Criterion is not working!
-            decoder_input = song[di] #give ground truth to the model
+            class_label = torch.argmax(song[di]).unsqueeze(0)
+            loss = loss + criterion(decoder_out, class_label) #Criterion is not working!
+            decoder_input = song[di].unsqueeze(0).unsqueeze(0) #give ground truth to the model
 
     loss.backward()
 
@@ -192,14 +246,16 @@ def train(batch, x_lens,token_to_int, encoder, decoder, encoder_optim, decoder_o
 
     return loss.item()/ seq_len
 
-def trainIters(encoder, decoder, batch, x_lens, token_to_int, n_iter, print_every=1000, plot_every=100, lr=0.01):
+def trainIters(encoder, decoder, batch, x_lens, token_to_int, int_to_token, n_iter, print_every=1000, plot_every=100, save_every=2, lr=0.01):
     start = time.time()
     plot_losses = []
     print_loss_total = 0 #reset every print_every
     plot_loss_total = 0 #reset every plot_every
 
-    encoder_optim = optim.SGD(encoder.parameters(), lr)
-    decoder_optim = optim.SGD(decoder.parameters(), lr)
+    # encoder_optim = optim.SGD(encoder.parameters(), lr)
+    # decoder_optim = optim.SGD(decoder.parameters(), lr)
+    encoder_optim = optim.Adam(encoder.parameters(), lr)
+    decoder_optim = optim.Adam(decoder.parameters(), lr)
 
     criterion = nn.NLLLoss()
 
@@ -208,6 +264,20 @@ def trainIters(encoder, decoder, batch, x_lens, token_to_int, n_iter, print_ever
 
         print_loss_total = print_loss_total + loss
         plot_loss_total = plot_loss_total + loss
+
+        if iter % save_every == 0:
+            torch.save({'epoch': iter,
+                        'model_state_dict': encoder.state_dict(),
+                        'optimizer_state_dict': encoder_optim.state_dict(),
+                        'loss': loss
+                        }, 'encoder.pth')
+
+            torch.save({'epoch': iter,
+                        'model_state_dict': decoder.state_dict(),
+                        'optimizer_state_dict': decoder_optim.state_dict(),
+                        'loss': loss
+                        }, 'decoder.pth')
+            print("~Saved checkpoint")
 
         if iter % print_every ==0:
             print_loss_avg = print_loss_total / print_every
@@ -221,7 +291,14 @@ def trainIters(encoder, decoder, batch, x_lens, token_to_int, n_iter, print_ever
             plot_losses.append(plot_loss_avg)
             plot_loss_total = 0
 
+
+
+    #Save models
+    torch.save(encoder.state_dict(), "encoder.pt")
+    torch.save(decoder.state_dict(), "decoder.pt")
+
     showPlot(plot_losses)
+
 
     return 0
 if __name__ == "__main__":
@@ -234,6 +311,7 @@ if __name__ == "__main__":
     datapath = r"C:\Users\isabelle\Documents\PythonScripts\ift6010-h21-team1\corpus.txt"
 
     batch, x_lens, token_to_int, int_to_token = build_training_batch(datapath)
+    batch = batch.to(device)
     #Technically no need to pack sequences...hum...
     """
     batch_packed = pack_padded_sequence(batch, x_lens, batch_first=True, enforce_sorted=False)
@@ -253,7 +331,8 @@ if __name__ == "__main__":
 
     #train
     n_iter = 10
-    trainIters(encoder, decoder, batch, x_lens, token_to_int, n_iter, print_every=1000, plot_every=100, lr=0.01)
+    trainIters(encoder, decoder, batch, x_lens, token_to_int, int_to_token, n_iter, print_every=1, plot_every=1, save_every=2, lr=0.01)
+
     print("Dodeee!")
     #
     # corpus = get_sentences(datapath)
