@@ -11,9 +11,8 @@ import os
 from io import open
 
 
-def perplexity(path):
+def perplexity(path, test_set_folder):
     model = kenlm.Model(path)
-    test_set_folder = u"data/JSB Chorales/valid/text/"
 
     perplexities = []
 
@@ -29,8 +28,11 @@ def show_ngram_perplexities():
         if model.endswith(u"arpa"):
             continue
         print model
-        perplexities = perplexity(os.path.join(u"model/kenlm/", model))
+        perplexities = perplexity(os.path.join(u"model/kenlm/", model), u"data/JSB Chorales/valid/text")
         print u'\t'.join([unicode(len(perplexities)), unicode(max(perplexities)), unicode(min(
+            perplexities)), unicode(average(perplexities))])
+        perplexities = perplexity(os.path.join(u"model/kenlm/", model), u"data/JSB Chorales/test/text")
+        print u'\t'.join([u"test set", unicode(max(perplexities)), unicode(min(
             perplexities)), unicode(average(perplexities))])
 
 # look at the perplexities
