@@ -59,7 +59,7 @@ class Generator():
         Returns:
             str: Next most likely token. Empty string if nothing is likely.
         """
-        highest_probability = 0
+        highest_probability = float('-inf')
         most_likely_token = ""
         for token in self.vocab:
             probability = self.probability_function(self.tokens + [token])
@@ -67,3 +67,6 @@ class Generator():
                 highest_probability = probability
                 most_likely_token = token
         return most_likely_token
+
+    def set_tokens(self, tokens: List[str]) -> None:
+        self.tokens = tokens

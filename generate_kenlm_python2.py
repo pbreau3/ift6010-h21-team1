@@ -58,7 +58,7 @@ class Generator(object):
         Returns:
             str: Next most likely token. Empty string if nothing is likely.
         """
-        highest_probability = 0
+        highest_probability = highest_probability = float('-inf')
         most_likely_token = u""
         for token in self.vocab:
             probability = self.probability_function(self.tokens + [token])
@@ -66,6 +66,9 @@ class Generator(object):
                 highest_probability = probability
                 most_likely_token = token
         return most_likely_token
+    
+    def set_tokens(self, tokens):
+        self.tokens = tokens
 
 
 class KenLMGenerator(Generator):
@@ -89,7 +92,15 @@ def get_kenlm_generator(model_path, vocab_path):
 
 
 def main():
-    get_kenlm_generator(u"model/kenlm/order2.bin" ,u"data/JSB Chorales/voc_musicautobot.voc")
+    import sys
+    model = sys.argv[1]
+    vocab = sys.argv[2]
+    premise = sys.argv[3]
+    print model
+    gen = get_kenlm_generator(model, vocab)
+    gen.set_tokens(premise.split())
+    print "Premise: " + premise
+    print " ".join(gen.generate_all())
 
 
 if __name__ == u"__main__":
