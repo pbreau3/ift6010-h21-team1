@@ -3,7 +3,6 @@ Generate music from the ngram model
 """
 from __future__ import absolute_import
 import kenlm
-from typing import List
 from vocab import get_vocab
 
 from typing import Any, Callable
@@ -23,7 +22,7 @@ class Generator(object):
         """
         self.model = model
         self.probability_function = probability_function
-        self.tokens: List[unicode] = []
+        self.tokens = []
         self.vocab = vocab
 
     def generate_all(self, token_limit=200):
@@ -35,7 +34,7 @@ class Generator(object):
         Returns:
             List[str]: Newly generated tokens
         """
-        new_tokens: List[unicode] = []
+        new_tokens = []
         for _ in xrange(token_limit):
             new_token = self.next_most_likely_token()
             if new_token == u"":
@@ -50,7 +49,7 @@ class Generator(object):
         Returns:
             str: Next token
         """
-        new_token: unicode = self.next_most_likely_token()
+        new_token = self.next_most_likely_token()
         self.tokens.append(new_token)
         return new_token
 
