@@ -3,7 +3,7 @@ Prepares vocabulary for generation
 """
 import pickle
 import os
-from typing import List
+from typing import List, Set
 
 
 def get_vocab(path: str) -> List[str]:
@@ -37,7 +37,7 @@ def get_vocab(path: str) -> List[str]:
 
     # load vocab
     else:
-        with open(path, mode='r') as pickled_data:
+        with open(path, mode='rb') as pickled_data:
             return pickle.load(pickled_data)
 
 
@@ -51,7 +51,7 @@ def create_vocab(path: str) -> List[str]:
     Returns:
         List[str]: [description]
     """
-    voc : set[str] = set()
+    voc : Set[str] = set()
 
     # Assume whitespace tokenization
     folder = os.path.dirname(path)
