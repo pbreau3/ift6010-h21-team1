@@ -3,7 +3,7 @@ Prepares vocabulary for generation
 """
 import pickle
 import os
-from typing import List, Set
+from typing import List
 
 
 def get_vocab(path: str) -> List[str]:
@@ -28,7 +28,12 @@ def get_vocab(path: str) -> List[str]:
         else:
             raise Exception("Unknown encoding for music MIDIs")
         
-        return create_vocab(os.path.join(folder, train_data_point))
+        voc = create_vocab(os.path.join(folder, train_data_point))
+
+        with open(path, mode='wb') as new_voc:
+            pickle.dump(voc, new_voc)
+
+        return voc
 
     # load vocab
     else:
@@ -46,7 +51,7 @@ def create_vocab(path: str) -> List[str]:
     Returns:
         List[str]: [description]
     """
-    voc : Set[str] = {}
+    voc : set[str] = set()
 
     # Assume whitespace tokenization
     folder = os.path.dirname(path)

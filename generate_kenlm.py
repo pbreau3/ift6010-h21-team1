@@ -7,7 +7,7 @@ from generate import Generator
 from interpython import call_python_version
 
 
-class KenLMGenerator():
+class KenLMGenerator(Generator):
     """
     This wraps on top of the Generator class. It will use execnet to
     cross the bridge to Python 2
@@ -21,7 +21,7 @@ class KenLMGenerator():
             return call_python_version("2.7", "kenlm_cpp.py", "get_log_probability",
                                        [self.model, " ".join(tokens)])
 
-        self.generator = Generator(self.model, probability_function=probability_function,
+        super().__init__(self.model, probability_function=probability_function,
                                    vocab=get_vocab(vocab_path))
 
 
