@@ -18,4 +18,12 @@ To download the data sets, use `setup.sh` for the JSB data set. A segment of the
 
 * `preprocess.py`: Converts a quantized file into a format that machines can learn on.
 
-* `evaluate.py`: Evaluates the performance of a given model.
+* `evaluate.py`: Evaluates the performance of a given model. Runs on Python 2 and works for KenLM.
+
+* `interpython.py`: Bridges Python 2 and 3
+
+* `kenlm_cpp.py`: Python 2 interface to the cpp model.
+
+* `generate.py`: Wrapper class for generation.
+
+* `generate_kenlm.py`: Wrapper class for generating music with kenlm.
