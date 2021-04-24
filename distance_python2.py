@@ -47,6 +47,9 @@ def token_by_token(expected, generated):
     Returns:
         int: Distance, 0 being the same
     """
+    if expected == u"xxbos" or expected == u"xxpad":
+        return 0
+
     expected_type = get_token_type(expected)
     generated_type = get_token_type(generated)
 
