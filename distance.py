@@ -81,7 +81,7 @@ def fixed_premise_distance(expected_file: str) -> int:
 
     return score
 
-def main():
+def file_comparison():
     import sys
     if len(sys.argv) != 4:
         print("Usage: distance.py expected_file generated_file [--levenshtein | --music]")
@@ -111,6 +111,14 @@ def main():
         print(levenshteinDistance(" ".join(expected_tokens), " ".join(generated_tokens)))
     elif mode == "--music":
         print(musicDistance(expected_tokens, generated_tokens))
+
+def main():
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: distance_python2.py test-token-file.txt")
+        exit(1)
+    
+    print(fixed_premise_distance(sys.argv[1]))
 
 if __name__ == "__main__":
     main()
