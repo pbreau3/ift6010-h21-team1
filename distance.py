@@ -26,7 +26,7 @@ def get_token_type(token: str) -> str:
     elif token == "xxsep":
         return "xxsep"
     else:
-        raise Exception("Unknown token type: {token}")
+        raise Exception(f"Unknown token type: {token}")
 
 def token_by_token(expected: str, generated: str) -> int:
     """Compute the distance metric between two tokens
@@ -46,7 +46,7 @@ def token_by_token(expected: str, generated: str) -> int:
     expected_type = get_token_type(expected)
     generated_type = get_token_type(generated)
 
-    if expected_type != generated_type:
+    if expected_type == "xxsep" or generated_type == "xxsep":
         return 100
     else:
         expected_int = int(expected[1:])
@@ -77,7 +77,7 @@ def main():
     # even the lengths of the files
     expected_tokens = expected.split()
     expected_size = len(expected_tokens)
-    generated_tokens = expected.split()
+    generated_tokens = generated.split()
     generated_size = len(generated_tokens)
 
     if expected_size < generated_size:
@@ -88,7 +88,7 @@ def main():
     if mode == "--levenshtein":
         print(levenshteinDistance(" ".join(expected_tokens), " ".join(generated_tokens)))
     elif mode == "--music":
-        print(musicDistance(expected, generated))
+        print(musicDistance(expected_tokens, generated_tokens))
 
 if __name__ == "__main__":
     main()
