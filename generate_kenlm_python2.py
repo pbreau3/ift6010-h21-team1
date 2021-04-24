@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import kenlm
 from vocab_python2 import get_vocab
 
+KenLM_instance = None
 
 class Generator(object):
 
@@ -90,6 +91,22 @@ class KenLMGenerator(Generator):
 def get_kenlm_generator(model_path, vocab_path):
     return KenLMGenerator(model_path, vocab_path)
 
+def init_kenlm(model_path, vocab_path):
+    KenLM_instance = KenLMGenerator(model_path, vocab_path)
+
+def set_kenlm_premise(tokens):
+    KenLM_instance.set_tokens(tokens)
+
+def generate_next():
+    """It will add the generation to the token log for the premise
+
+    Returns:
+        [str]: Next token
+    """
+    return KenLM_instance.generate_next()
+
+def next_most_likely_token():
+    return KenLM_instance.next_most_likely_token()
 
 def main():
     import sys
