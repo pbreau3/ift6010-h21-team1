@@ -1,5 +1,8 @@
 
 # https://stackoverflow.com/questions/2460177/edit-distance-in-python#32558749
+from typing import List
+
+
 def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
         s1, s2 = s2, s1
@@ -50,9 +53,9 @@ def token_by_token(expected: str, generated: str) -> int:
         generated_int = int(generated[1:])
         return abs(expected_int - generated_int)
 
-def musicDistance(expected: str, generated: str) -> int:
+def musicDistance(expected: List[str], generated: List[str]) -> int:
     score = 0
-    for expected_token, generated_token in zip(expected.split()[2:], generated.split()[2:]):
+    for expected_token, generated_token in zip(expected[2:], generated[2:]):
         score += token_by_token(expected_token, generated_token)
     return score
 
@@ -71,8 +74,19 @@ def main():
     with open(generated_file, 'r') as file:
         generated = file.read()
     
+    # even the lengths of the files
+    expected_tokens = expected.split()
+    expected_size = len(expected_tokens)
+    generated_tokens = expected.split()
+    generated_size = len(generated_tokens)
+
+    if expected_size < generated_size:
+        generated_tokens = generated_tokens[:expected_size]
+    else:
+        expected_tokens = expected_tokens[:generated_size]
+
     if mode == "--levenshtein":
-        print(levenshteinDistance(expected, generated))
+        print(levenshteinDistance(" ".join(expected_tokens), " ".join(generated_tokens)))
     elif mode == "--music":
         print(musicDistance(expected, generated))
 
