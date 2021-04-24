@@ -26,7 +26,7 @@ def get_token_type(token: str) -> str:
     elif token == "xxsep":
         return "xxsep"
     else:
-        raise Exception(f"Unknown token type: {token}")
+        raise Exception("Unknown token type: {token}".format(token=token))
 
 def token_by_token(expected: str, generated: str) -> int:
     """Compute the distance metric between two tokens
@@ -66,7 +66,7 @@ def fixed_premise_distance(expected_file: str) -> int:
 
     from generate_kenlm_python2 import init_kenlm, set_kenlm_premise, next_most_likely_token
 
-    init_kenlm("models/kenlm/order16.bin", "data/JSB Chorales/voc_musicautobot.voc")
+    init_kenlm("model/kenlm/order16.bin", "data/JSB Chorales/voc_musicautobot.voc")
 
     score = 0
 

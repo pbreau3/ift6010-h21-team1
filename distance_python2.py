@@ -30,7 +30,7 @@ def get_token_type(token):
     elif token == u"xxsep":
         return u"xxsep"
     else:
-        raise Exception(f"Unknown token type: {token}")
+        raise Exception(u"Unknown token type: {token}".format(token=token))
 
 def token_by_token(expected, generated):
     u"""Compute the distance metric between two tokens
@@ -70,7 +70,7 @@ def fixed_premise_distance(expected_file):
 
     from generate_kenlm_python2 import init_kenlm, set_kenlm_premise, next_most_likely_token
 
-    init_kenlm(u"models/kenlm/order16.bin", u"data/JSB Chorales/voc_musicautobot.voc")
+    init_kenlm(u"model/kenlm/order16.bin", u"data/JSB Chorales/voc_musicautobot.voc")
 
     score = 0
 
