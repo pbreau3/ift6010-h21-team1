@@ -55,10 +55,10 @@ def musicDistance(expected: str, generated: str) -> int:
     for expected_token, generated_token in zip(expected.split()[2:], generated.split()[2:]):
         score += token_by_token(expected_token, generated_token)
     return score
-    
+
 def main():
     import sys
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print("Usage: distance.py expected_file generated_file [--levenshtein | --music]")
         exit(1)
 
