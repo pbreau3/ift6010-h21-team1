@@ -124,6 +124,7 @@ def main():
     if len(sys.argv) != 4:
         print u"Usage: distance_python2.py model vocab test-token-file.txt"
         print u"Ex: distance_python2.py model/kenlm/order16.bin \"data/JSB Chorales/voc_musicautobot.voc\" test-token-file.txt"
+        print u"Received: {argc} args".format(argc=len(sys.argv))
         exit(1)
     
     print fixed_premise_distance(sys.argv[1], sys.argv[2], sys.argv[3])
