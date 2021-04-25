@@ -62,14 +62,14 @@ def musicDistance(expected: List[str], generated: List[str]) -> int:
         score += token_by_token(expected_token, generated_token)
     return score
 
-def fixed_premise_distance(expected_file: str) -> int:
+def fixed_premise_distance(model: str, voc: str, expected_file: str) -> int:
     with open(expected_file, 'r') as file:
         expected = file.read()
     expected = expected.split()
 
     from generate_kenlm_python2 import init_kenlm, set_kenlm_premise, next_most_likely_token
 
-    init_kenlm("model/kenlm/order16.bin", "data/JSB Chorales/voc_musicautobot.voc")
+    init_kenlm(model, voc)
 
     score = 0
 
@@ -117,11 +117,12 @@ def file_comparison():
 
 def main():
     import sys
-    if len(sys.argv) != 2:
-        print("Usage: distance_python2.py test-token-file.txt")
+    if len(sys.argv) != 4:
+        print("Usage: distance_python2.py model vocab test-token-file.txt")
+        print("Ex: distance_python2.py model/kenlm/order16.bin \"data/JSB Chorales/voc_musicautobot.voc\" test-token-file.txt")
         exit(1)
     
-    print(fixed_premise_distance(sys.argv[1]))
+    print(fixed_premise_distance(sys.argv[1], sys.argv[2], sys.argv[3]))
 
 if __name__ == "__main__":
     main()
